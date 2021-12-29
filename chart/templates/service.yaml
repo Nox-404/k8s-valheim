@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "valheim.fullname" . }}
+  labels: {{- include "valheim.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
+  annotations: {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ include "valheim.valheimPort" . }}
+      targetPort: valheim
+      protocol: UDP
+      name: valheim
+      {{- if eq "NodePort" .Values.service.type }}
+      nodePort: {{ include "valheim.valheimPort" . }}
+      {{- end }}
+    - port: {{ include "valheim.msqpPort" . }}
+      targetPort: msqp
+      protocol: UDP
+      name: msqp
+      {{- if eq "NodePort" .Values.service.type }}
+      nodePort: {{ include "valheim.msqpPort" . }}
+      {{- end }}
+  selector: {{- include "valheim.selectorLabels" . | nindent 4 }}

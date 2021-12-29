@@ -1,0 +1,9 @@
+{{- if .Values.server.public }}
+Your server should appear in the community server list as "{{ .Values.server.name }}".
+
+If not,
+{{- end }}
+You may join your server using the Join IP to "[SERVER_IP]:{{ include "valheim.valheimPort" . }}".
+
+If you can't join,
+Make sure the ports from {{ include "valheim.valheimPort" . }}/UDP and  {{ include "valheim.msqpPort" . }}/UDP are open and reachable.

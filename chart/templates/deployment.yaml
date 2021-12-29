@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "valheim.fullname" . }}
+  labels: {{- include "valheim.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels: {{- include "valheim.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels: {{- include "valheim.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "valheim.serviceAccountName" . }}
+      securityContext: {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext: {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: valheim
+              containerPort: {{ include "valheim.valheimPort" . }}
+              protocol: UDP
+            - name: msqp
+              containerPort: {{ include "valheim.msqpPort" . }}
+              protocol: UDP
+          env:
+            - name: SERVER_NAME
+              value: {{ .Values.server.name | default .Values.server.world }}
+            - name: SERVER_WORLD_NAME
+              value: {{ .Values.server.world }}
+            - name: SERVER_PORT
+              value: {{ include "valheim.valheimPort" . | quote }}
+            - name: SERVER_PUBLIC
+              value: {{ ternary 1 0 .Values.server.public | quote }}
+            - name: SERVER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "valheim.fullname" . }}
+                  key: password
+          volumeMounts:
+            - name: saves
+              mountPath: /valheim/saves
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: saves
+          {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim | default (include "valheim.fullname" .) }}
+          {{- else }}
+          emptyDir:
+            medium: {{ .Values.persistence.medium | default "" }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations: {{- toYaml . | nindent 8 }}
+      {{- end }}
