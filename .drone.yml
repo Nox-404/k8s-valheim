@@ -1,3 +1,4 @@
+---
 kind: pipeline
 type: kubernetes
 name: default
@@ -43,3 +44,8 @@ steps:
       status:
       - failure
       - success
+---
+kind: signature
+hmac: 906ee1a3cc59ec431c3d202e06d0a5d9a3ddabef8768efdeb007c468564d727f
+
+...
