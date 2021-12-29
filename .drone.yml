@@ -3,37 +3,17 @@ kind: pipeline
 type: kubernetes
 name: default
 steps:
-  # Generate latest docker image
-  - name: publish-latest
+  # Generate docker image
+  - name: docker-release
     image: plugins/docker
     settings:
       dockerfile: docker/Dockerfile
       repo: nox404/valheim
-      tags:
-        - "${DRONE_COMMIT_SHA:0:7}"
-        - latest
+      auto_tag: yes
       username:
         from_secret: docker_username
       password:
         from_secret: docker_password
-    when:
-      branch:
-        - master
-  # Generate tagged image
-  - name: publish-release
-    image: plugins/docker
-    settings:
-      dockerfile: docker/Dockerfile
-      repo: nox404/valheim
-      tags:
-        - "${DRONE_TAG}"
-      username:
-        from_secret: docker_username
-      password:
-        from_secret: docker_password
-    when:
-      event:
-        - tag
   # Alerting
   - name: notify
     image: plugins/slack
@@ -46,6 +26,6 @@ steps:
       - success
 ---
 kind: signature
-hmac: 906ee1a3cc59ec431c3d202e06d0a5d9a3ddabef8768efdeb007c468564d727f
+hmac: b141a980376b4825e90ce5f888661667967264f8de7c1757bc069414839635aa
 
 ...
