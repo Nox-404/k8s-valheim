@@ -1,5 +1,5 @@
 {{- if .Values.server.public }}
-Your server should appear in the community server list as "{{ .Values.server.name }}".
+Your server should appear in the community server list as "{{ .Values.server.name | default .Values.server.world }}".
 
 If not,
 {{- end }}
