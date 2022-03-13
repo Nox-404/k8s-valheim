@@ -5,9 +5,14 @@ set -o errexit
 set -o pipefail
 
 # Set some defaults.
-BACKUP_ENABLED="${BACKUP_ENABLED:-yes}"
+BACKUP_ENABLED="${BACKUP_ENABLED:-true}"
 BACKUP_DIR="${BACKUP_DIR:-saves/backups}"
 BACKUP_RETENTION_DAYS="${BACKUP_RETENTION_DAYS:-30}"
+
+SERVER_NAME="${SERVER_NAME:-Valheim Server}"
+SERVER_PORT="${SERVER_PORT:-2456}"
+SERVER_PUBLIC="${SERVER_PUBLIC:-0}"
+SERVER_WORLD_NAME="${SERVER_WORLD_NAME:-world}"
 
 # Send quit signal and wait for the server to terminate.
 _quit_server() {

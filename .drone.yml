@@ -8,6 +8,7 @@ steps:
     image: plugins/docker
     settings:
       dockerfile: docker/Dockerfile
+      context: docker
       repo: nox404/valheim
       auto_tag: yes
       username:
@@ -26,6 +27,6 @@ steps:
       - success
 ---
 kind: signature
-hmac: b141a980376b4825e90ce5f888661667967264f8de7c1757bc069414839635aa
+hmac: a383899a7ddc1417336bfbd6c09d66ede16834cd17fe3b62347232a6e3989aff
 
 ...
