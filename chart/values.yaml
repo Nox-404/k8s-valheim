@@ -8,6 +8,11 @@ server:
   password: password
   public: yes
 
+  backup:
+    enabled: yes
+    directory: saves/backups
+    retention_days: 30
+
 replicaCount: 1
 
 image:
@@ -49,6 +54,8 @@ securityContext: {}
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
+
+# terminationGracePeriodSeconds: 60
 
 service:
   type: ClusterIP

@@ -22,10 +22,15 @@ spec:
       imagePullSecrets: {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "valheim.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
       securityContext: {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ default 60 .Values.terminationGracePeriodSeconds }}
       containers:
         - name: {{ .Chart.Name }}
+          {{- with .Values.securityContext }}
           securityContext: {{- toYaml .Values.securityContext | nindent 12 }}
+         {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -49,10 +54,18 @@ spec:
                 secretKeyRef:
                   name: {{ include "valheim.fullname" . }}
                   key: password
+            - name: BACKUP_ENABLED
+              value: {{ .Values.server.backup.enabled | quote }}
+            - name: BACKUP_DIR
+              value: {{ .Values.server.backup.directory | quote }}
+            - name: BACKUP_RETENTION_DAYS
+              value: {{ .Values.server.backup.retention_days | quote }}
           volumeMounts:
             - name: saves
               mountPath: /valheim/saves
+          {{- with .Values.resources }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
+          {{- end }}
       volumes:
         - name: saves
           {{- if .Values.persistence.enabled }}

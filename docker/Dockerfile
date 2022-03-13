@@ -33,16 +33,9 @@ ENV LD_LIBRARY_PATH="./linux64:${LD_LIBRARY_PATH}" \
 
 EXPOSE 2456-2457/udp
 STOPSIGNAL SIGINT
-ENTRYPOINT ["tini", "--"]
 
-CMD [ \
-    "sh", "-c", "./valheim_server.x86_64 \
-    -name ${SERVER_NAME} \
-    -port ${SERVER_PORT} \
-    -savedir saves \
-    -world ${SERVER_WORLD_NAME} \
-    -password ${SERVER_PASSWORD} \
-    -public ${SERVER_PUBLIC}" \
-]
+COPY --chown=valheim:valheim valheim.sh /valheim
+
+CMD [ "./valheim.sh" ]
 
 VOLUME /valheim/saves

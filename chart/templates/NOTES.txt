@@ -6,4 +6,16 @@ If not,
 You may join your server using the Join IP to "[SERVER_IP]:{{ include "valheim.valheimPort" . }}".
 
 If you can't join,
-Make sure the ports from {{ include "valheim.valheimPort" . }}/UDP and  {{ include "valheim.msqpPort" . }}/UDP are open and reachable.
+Make sure the ports from {{ include "valheim.valheimPort" . }}/UDP and {{ include "valheim.msqpPort" . }}/UDP are open and reachable.
+
+{{- if .Values.server.backup.enabled }}
+
+A backup is created upon exit in the "{{ .Values.server.backup.directory }}".
+
+{{- if (gt (int .Values.server.backup.retention_days) 0) }}
+It will be kept for {{ .Values.server.backup.retention_days }} days. (The cleanup is done when the server stops).
+{{- end }}
+
+{{- end }}
+
+Happy sailing!
